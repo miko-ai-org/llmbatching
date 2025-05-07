@@ -34,6 +34,7 @@ const client = new OpenAIBatching({
 const completion = await client.responses.create({
   model: "gpt-4o",
   messages: [{ role: "user", content: "Hello, world!" }],
+  useBatching: true,
 });
 
 if (completion.hasCompleted) {
@@ -66,7 +67,8 @@ import OpenAIBatching from "@miko/openaibatching"
 
 const client = new OpenAIBatching({
   batchServerUrl: "https://localhost:9487",
-  batchServerApiKey: process.env['BATCH_SERVER_API_KEY']
+  batchServerApiKey: process.env['BATCH_SERVER_API_KEY'],
+  useBatching: true,
 });
 
 const completion = await client.responses.create({
