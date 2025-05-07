@@ -1,10 +1,11 @@
 # OpenAI Batching
 
-This is a service which sits between you and OpenAI, exposing a simple, one to one batching interface to your queries so that you can reduce costs by 50%. It's only applicable for non real time tasks, for example: bulk evals or classifying large datasets. It's built on top of [Open AI's batching APIs](https://platform.openai.com/docs/guides/batch#4-check-the-status-of-a-batch).
+This is a service which sits between your backend and OpenAI, exposing a simple, one to one batching interface to your queries so that you can reduce costs by 50%. It's only applicable for non real time tasks, for example: bulk evals or classifying large datasets. It's built on top of [Open AI's batching APIs](https://platform.openai.com/docs/guides/batch#4-check-the-status-of-a-batch).
 
 ## Why does this exist?
-Simply, to save 50% costs on OpenAI queries. Also, the interface of this library is much simpler than the raw batching APIs. The normal OpenAI query is like follows:
+Simply, to save 50% costs on OpenAI queries. Also, the interface of this library is much simpler than the raw batching APIs:
 
+The normal OpenAI query is like follows:
 ```typescript
 import OpenAI from 'openai';
 
@@ -42,7 +43,7 @@ if (completion.hasCompleted) {
 }
 ```
 
-As you can see, the API is very similar, and it hides all the complexities of using the raw batching APIs provided by OpenAI.
+As you can see, the new API is very similar to the real time one! It hides all the complexities of using the raw batching APIs provided by OpenAI.
 
 ## How to use it?
 
@@ -89,3 +90,4 @@ You can read all about it [here](https://platform.openai.com/docs/guides/batch#4
 - Once completed, get the output file ID from OpenAI.
 - Download the result using the output file ID.
 - Extract each result based on the custom ID generated in step one and feed it back to your business logic.
+- You need to make sure you handle errors and race conditions in each of the steps above.
