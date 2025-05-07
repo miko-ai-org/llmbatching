@@ -3,7 +3,7 @@
 This is a service which sits between you and OpenAI, exposing a simple, one to one batching interface to your queries so that you can reduce costs by 50%. It's only applicable for non real time tasks, for example: bulk evals or classifying large datasets. It's built on top of [Open AI's batching APIs](https://platform.openai.com/docs/guides/batch#4-check-the-status-of-a-batch).
 
 ## Why does this exist?
-The normal OpenAI query is like follows:
+Simply, to save 50% costs on OpenAI queries. Also, the interface of this library is much simpler than the raw batching APIs. The normal OpenAI query is like follows:
 
 ```typescript
 import OpenAI from 'openai';
@@ -79,3 +79,13 @@ if (completion.hasCompleted) {
   console.log("Still in progress.. we should query it again after a few mins.");
 }
 ```
+
+## What are the steps involved in using the raw OpenAI Batching APIs?
+You can read all about it [here](https://platform.openai.com/docs/guides/batch#4-check-the-status-of-a-batch), but roughly, the steps are:
+- Take several queries and put them all in one big file in a JSON format. Each query in the file needs to have a unique ID 
+- Upload the file to OpenAI, to get a file ID.
+- Create a batch job in OpenAI using the file ID, to get a batch ID.
+- Poll the batch job using the batch ID until it's complete or has failed.
+- Once completed, get the output file ID from OpenAI.
+- Download the result using the output file ID.
+- Extract each result based on the custom ID generated in step one and feed it back to your business logic.
