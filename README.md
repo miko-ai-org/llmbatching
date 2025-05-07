@@ -5,7 +5,7 @@ This is a service which sits between your backend and OpenAI, exposing a simple,
 ## Why does this exist?
 Simply, to save 50% costs on OpenAI queries. Also, the interface of this library is much simpler than the raw batching APIs:
 
-The normal OpenAI query is like follows:
+The normal OpenAI query:
 ```typescript
 import OpenAI from 'openai';
 
@@ -24,7 +24,7 @@ console.log(completion.choices[0].message.content);
 The above is real time, and doesn't use any batching API (normal OpenAI costs). However, with this service, you can leverage batching in this way:
 
 ```ts
-import OpenAIBatching from "miko/openaibatching"
+import OpenAIBatching from "@miko/openaibatching"
 
 const client = new OpenAIBatching({
   batchServerUrl: "https://localhost:9487",
@@ -56,13 +56,13 @@ docker run -d -p 9487:9487 -e OPENAI_API_KEY=<your-openai-api-key> -e BATCH_SERV
 2. Install the package in your backend:
 
 ```bash
-npm install --save miko/openaibatching
+npm install --save @miko/openaibatching
 ```
 
 3. Use it in your code:
 
 ```ts
-import OpenAIBatching from "miko/openaibatching"
+import OpenAIBatching from "@miko/openaibatching"
 
 const client = new OpenAIBatching({
   batchServerUrl: "https://localhost:9487",
