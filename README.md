@@ -157,3 +157,7 @@ This project **does all of that for you**.
 ## 📄 License
 
 MIT
+
+## Author
+
+[Rishabh Poddar](https://github.com/rishabhpoddar)
