@@ -57,13 +57,8 @@ As you can see, the new API is very similar to the real time one! It hides all t
 docker run -d -p 9487:9487 -e OPENAI_API_KEY=<your-openai-api-key> -e BATCH_SERVER_API_KEY=<your-batch-server-api-key> POSTGRES_URL="postgres://<user>:<password>@<host>:5432/batching_db"
 ```
 
-2. Install the package in your backend:
 
-```bash
-npm install --save @miko/openaibatching
-```
-
-3. Use it in your code:
+2. Use it in your code (NodeJS example):
 
 ```ts
 import OpenAI from 'openai';
