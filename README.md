@@ -76,7 +76,7 @@ console.log(response);
 git clone https://github.com/rishabhpoddar/openaibatching.git
 ```
 
-### 2. Create a docker image
+### 2. Create a docker image (Batching Server)
 
 ```bash
 docker build -t <image_name> .
