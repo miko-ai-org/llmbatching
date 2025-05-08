@@ -14,11 +14,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model key_values {
-  key   String @id
-  value String
-}
-
 model openai_batch_tasks {
   id                String  @id
   original_base_url String

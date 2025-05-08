@@ -120,11 +120,6 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.Key_valuesScalarFieldEnum = {
-  key: 'key',
-  value: 'value'
-};
-
 exports.Prisma.Openai_batch_tasksScalarFieldEnum = {
   id: 'id',
   original_base_url: 'original_base_url',
@@ -172,7 +167,6 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
-  key_values: 'key_values',
   openai_batch_tasks: 'openai_batch_tasks'
 };
 
