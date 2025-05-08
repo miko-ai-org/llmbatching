@@ -70,7 +70,19 @@ console.log(response);
 
 ## 🚀 Getting Started
 
-### 1. Run the Batching Server
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/rishabhpoddar/openaibatching.git
+```
+
+### 2. Create a docker image
+
+```bash
+docker build -t <image_name> .
+```
+
+### 3. Run the Batching Server
 
 Run the server using Docker:
 
@@ -79,12 +91,12 @@ docker run -d -p 9487:9487 \
     -e OPENAI_API_KEY=<your-openai-api-key> \
     -e API_KEY=<your-batch-server-api-key> \
     -e POSTGRES_URL="postgresql://<user>:<password>@<host>:5432/batching_db" \
-    miko/openaibatching
+    <image_name>
 ```
 
 > **Note**: Requires a PostgreSQL database to track job status and results.
 
-### 2. Use it in Your Code (Node.js Example)
+### 4. Use it in Your Code (Node.js Example)
 
 ```ts
 import OpenAI from 'openai';
