@@ -10,9 +10,11 @@ Built on top of [OpenAI’s official batching APIs](https://platform.openai.com/
 
 ## ✨ Why use this?
 
-- **50%+ cost savings** when using batch mode.
-- **No learning curve**: identical interface to OpenAI’s standard SDK.
+- **50% cost savings** when using batch mode.
+- **No learning curve**: Extremely similar interface to OpenAI’s standard SDK.
 - **Handles all the messy stuff** like polling, mapping, retries, and error handling.
+- **Is crash resistant**: We store state in your database, not in memory.
+- **Fully self hosted**: No need to trust a third party service.
 
 Compare the two:
 
@@ -40,7 +42,7 @@ import OpenAI from 'openai';
 
 const clientWithBatching = new OpenAI({
     apiKey: process.env['API_KEY_FOR_BATCH_SERVER'],
-    baseURL: process.env['BATCH_SERVER_URL']
+    baseURL: "https://localhost:9487" // pointing to the batching server
 });
 
 let response = "";
@@ -75,9 +77,9 @@ Run the server using Docker:
 ```bash
 docker run -d -p 9487:9487 \
     -e OPENAI_API_KEY=<your-openai-api-key> \
-    -e BATCH_SERVER_API_KEY=<your-batch-server-api-key> \
+    -e API_KEY=<your-batch-server-api-key> \
     -e POSTGRES_URL="postgresql://<user>:<password>@<host>:5432/batching_db" \
-    your-image-name
+    miko/openaibatching
 ```
 
 > **Note**: Requires a PostgreSQL database to track job status and results.
@@ -89,7 +91,7 @@ import OpenAI from 'openai';
 
 const clientWithBatching = new OpenAI({
     apiKey: process.env['API_KEY_FOR_BATCH_SERVER'],
-    baseURL: process.env['BATCH_SERVER_URL']
+    baseURL: "https://localhost:9487" // pointing to the batching server
 });
 
 let response = "";
@@ -119,13 +121,13 @@ console.log(response);
 
 Normally, using OpenAI’s batching API requires:
 
-1. Building a JSONL file of all your prompts with unique IDs.
+1. Building a `JSONL` file of all your prompts with unique IDs.
 2. Uploading it to OpenAI to get a file ID.
 3. Creating a batch job using that file.
 4. Polling the job status until completion.
 5. Downloading the output file when it’s done.
 6. Mapping results back to your original queries.
-7. Handling retries, errors, race conditions, and consistency.
+7. Handling retries, errors, race conditions, caching, crashes and consistency.
 
 This project **does all of that for you**.
 
