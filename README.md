@@ -43,20 +43,25 @@ const clientWithBatching = new OpenAI({
     baseURL: process.env['BATCH_SERVER_URL']
 });
 
-try {
-    const completion = await clientWithBatching.responses.create({
-        model: "gpt-4o",
-        input: [{ role: "user", content: "Hello, world!" }],
-    });
-
-    console.log(completion.output_text);
-} catch (e: any) {
-    if (e.status === 422) {
-        console.log("Batch job is still processing. Try again later.");
-    } else {
-        throw e;
+let response = "";
+while(true) {
+    try {
+        const completion = await clientWithBatching.responses.create({
+            model: "gpt-4o",
+            input: [{ role: "user", content: "Hello, world!" }],
+        });
+        response = completion.output_text;
+        break;
+    } catch (e: any) {
+        if (e.status === 422) {
+            // we continue to the next iteration after waiting for 2 mins
+            await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000));
+        } else {
+            throw e;
+        }
     }
 }
+console.log(response);
 ```
 
 ---
@@ -87,20 +92,25 @@ const clientWithBatching = new OpenAI({
     baseURL: process.env['BATCH_SERVER_URL']
 });
 
-try {
-    const completion = await clientWithBatching.responses.create({
-        model: "gpt-4o",
-        input: [{ role: "user", content: "Hello, world!" }],
-    });
-
-    console.log(completion.output_text);
-} catch (e: any) {
-    if (e.status === 422) {
-        console.log("Batch job is still processing. Try again later.");
-    } else {
-        throw e;
+let response = "";
+while(true) {
+    try {
+        const completion = await clientWithBatching.responses.create({
+            model: "gpt-4o",
+            input: [{ role: "user", content: "Hello, world!" }],
+        });
+        response = completion.output_text;
+        break;
+    } catch (e: any) {
+        if (e.status === 422) {
+            // we continue to the next iteration after waiting for 2 mins
+            await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000));
+        } else {
+            throw e;
+        }
     }
 }
+console.log(response);
 ```
 
 ---
