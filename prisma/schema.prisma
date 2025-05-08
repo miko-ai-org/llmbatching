@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model key_values {
+  key   String @id
+  value String
+}
+
+model openai_batch_tasks {
+  batch_id          String  @id
+  custom_id         String
+  json_data         Json
+  openai_file_id    String?
+  file_uploaded     Boolean @default(false)
+  openai_batch_id   String?
+  status            String // pending, completed
+  result            String? @db.Text // will be there if completed
+  time_last_updated BigInt
+  time_created      BigInt
+  output_file_id    String?
+
+  @@index([custom_id])
+  @@index([status, result])
+  @@index([openai_file_id])
+  @@index([openai_batch_id])
+  @@index([status, openai_file_id, file_uploaded, openai_batch_id])
+}

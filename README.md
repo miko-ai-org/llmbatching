@@ -15,10 +15,10 @@ const client = new OpenAI({
 
 const completion = await client.responses.create({
   model: "gpt-4o",
-  messages: [{ role: "user", content: "Hello, world!" }],
+  input: [{ role: "user", content: "Hello, world!" }],
 });
 
-console.log(completion.choices[0].message.content);
+console.log(completion.output_text);
 ```
 
 The above is real time, and doesn't use any batching API (normal OpenAI costs). However, with this service, you can leverage batching in this way:
@@ -34,11 +34,11 @@ const clientWithBatching = new OpenAI({
 try {
   const completion = await clientWithBatching.responses.create({
     model: "gpt-4o",
-    messages: [{ role: "user", content: "Hello, world!" }],
+    input: [{ role: "user", content: "Hello, world!" }],
   });
 
   console.log(completion.output_text);
-} catch (e) {
+} catch (e: any) {
   if (e.status === 422) {
     console.log("Batch job is still processing. Try again later.")
   } else {
@@ -76,11 +76,11 @@ const clientWithBatching = new OpenAI({
 try {
   const completion = await clientWithBatching.responses.create({
     model: "gpt-4o",
-    messages: [{ role: "user", content: "Hello, world!" }],
+    input: [{ role: "user", content: "Hello, world!" }],
   });
 
   console.log(completion.output_text);
-} catch (e) {
+} catch (e: any) {
   if (e.status === 422) {
     console.log("Batch job is still processing. Try again later.")
   } else {
