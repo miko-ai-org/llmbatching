@@ -11,7 +11,7 @@ dotenv.config();
 import express from "express";
 import { logError, logInfo } from "./logger";
 import crypto from "crypto";
-import { apiHandler } from "./utils";
+import { apiHandler, sortObject } from "./utils";
 import { v4 as uuidv4 } from 'uuid';
 import prisma from "./prisma/client";
 
@@ -38,7 +38,7 @@ app.post("/responses", apiHandler(async (req, res) => {
         delete body.metadata.originalBaseUrl;
         originalBaseUrl = originalBaseUrl.replace(/\/$/, "");
     }
-    let batchId = crypto.createHash('sha256').update(JSON.stringify(body)).digest('hex');
+    let batchId = crypto.createHash('sha256').update(JSON.stringify(sortObject(body))).digest('hex');
 
     let batchInfo = await prisma.openai_batch_tasks.findUnique({
         where: {
