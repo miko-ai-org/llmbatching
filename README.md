@@ -24,22 +24,26 @@ console.log(completion.choices[0].message.content);
 The above is real time, and doesn't use any batching API (normal OpenAI costs). However, with this service, you can leverage batching in this way:
 
 ```ts
-import OpenAIBatching from "@miko/openaibatching"
+import OpenAI from 'openai';
 
-const client = new OpenAIBatching({
-  batchServerUrl: "https://localhost:9487",
-  batchServerApiKey: process.env['BATCH_SERVER_API_KEY']
+const clientWithBatching = new OpenAI({
+  apiKey: process.env['API_KEY_FOR_BATCH_SERVER'],
+  baseURL: process.env['BATCH_SERVER_URL']
 });
 
-const completion = await client.responses.create({
-  model: "gpt-4o",
-  messages: [{ role: "user", content: "Hello, world!" }],
-});
+try {
+  const completion = await clientWithBatching.responses.create({
+    model: "gpt-4o",
+    messages: [{ role: "user", content: "Hello, world!" }],
+  });
 
-if (completion.hasCompleted) {
-  console.log(completion.choices[0].message.content);
-} else {
-  console.log("Still in progress.. we should query it again after a few mins.");
+  console.log(completion.output_text);
+} catch (e) {
+  if (e.status === 422) {
+    console.log("Batch job is still processing. Try again later.")
+  } else {
+    throw e;
+  }
 }
 ```
 
@@ -62,22 +66,26 @@ npm install --save @miko/openaibatching
 3. Use it in your code:
 
 ```ts
-import OpenAIBatching from "@miko/openaibatching"
+import OpenAI from 'openai';
 
-const client = new OpenAIBatching({
-  batchServerUrl: "https://localhost:9487",
-  batchServerApiKey: process.env['BATCH_SERVER_API_KEY']
+const clientWithBatching = new OpenAI({
+  apiKey: process.env['API_KEY_FOR_BATCH_SERVER'],
+  baseURL: process.env['BATCH_SERVER_URL']
 });
 
-const completion = await client.responses.create({
-  model: "gpt-4o",
-  messages: [{ role: "user", content: "Hello, world!" }],
-});
+try {
+  const completion = await clientWithBatching.responses.create({
+    model: "gpt-4o",
+    messages: [{ role: "user", content: "Hello, world!" }],
+  });
 
-if (completion.hasCompleted) {
-  console.log(completion.choices[0].message.content);
-} else {
-  console.log("Still in progress.. we should query it again after a few mins.");
+  console.log(completion.output_text);
+} catch (e) {
+  if (e.status === 422) {
+    console.log("Batch job is still processing. Try again later.")
+  } else {
+    throw e;
+  }
 }
 ```
 
