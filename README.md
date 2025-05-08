@@ -71,7 +71,7 @@ Run the server using Docker:
 docker run -d -p 9487:9487 \
     -e OPENAI_API_KEY=<your-openai-api-key> \
     -e BATCH_SERVER_API_KEY=<your-batch-server-api-key> \
-    -e POSTGRES_URL="postgres://<user>:<password>@<host>:5432/batching_db" \
+    -e POSTGRES_URL="postgresql://<user>:<password>@<host>:5432/batching_db" \
     your-image-name
 ```
 
