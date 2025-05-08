@@ -54,8 +54,8 @@ while(true) {
         break;
     } catch (e: any) {
         if (e.status === 422) {
-            // we continue to the next iteration after waiting for 2 mins
-            await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000));
+            // we continue to the next iteration after waiting for 1 min
+            await new Promise(resolve => setTimeout(resolve, 1 * 60 * 1000));
         } else {
             throw e;
         }
@@ -103,8 +103,8 @@ while(true) {
         break;
     } catch (e: any) {
         if (e.status === 422) {
-            // we continue to the next iteration after waiting for 2 mins
-            await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000));
+            // we continue to the next iteration after waiting for 1 min
+            await new Promise(resolve => setTimeout(resolve, 60 * 1000));
         } else {
             throw e;
         }
