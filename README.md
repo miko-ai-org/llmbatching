@@ -1,96 +1,135 @@
-# OpenAI Batching
+# 🧠 OpenAI Batching Proxy
 
-This is a service which sits between your backend and OpenAI, exposing a simple, one to one batching interface to your queries so that you can reduce costs by 50%. It's only applicable for non real time tasks, for example: bulk evals or classifying large datasets. It's built on top of [Open AI's batching APIs](https://platform.openai.com/docs/guides/batch#4-check-the-status-of-a-batch).
+**Reduce OpenAI API costs by up to 50% for non-real-time tasks.**
 
-## Why does this exist?
-Simply, to save 50% costs on OpenAI queries. Also, the interface of this library is much simpler than the raw batching APIs:
+This is a lightweight proxy server that sits between your backend and OpenAI. It provides a simple, drop-in replacement for OpenAI’s API client that enables **automatic batching** for high-volume, non-urgent workloads like bulk evaluation or dataset classification.
 
-The normal OpenAI query:
-```typescript
+Built on top of [OpenAI’s official batching APIs](https://platform.openai.com/docs/guides/batch#4-check-the-status-of-a-batch), this service abstracts away all the complexity.
+
+---
+
+## ✨ Why use this?
+
+- **50%+ cost savings** when using batch mode.
+- **No learning curve**: identical interface to OpenAI’s standard SDK.
+- **Handles all the messy stuff** like polling, mapping, retries, and error handling.
+
+Compare the two:
+
+### Standard OpenAI API (real-time)
+
+```ts
 import OpenAI from 'openai';
 
 const client = new OpenAI({
-  apiKey: process.env['OPENAI_API_KEY'],
+    apiKey: process.env['OPENAI_API_KEY'],
 });
 
 const completion = await client.responses.create({
-  model: "gpt-4o",
-  input: [{ role: "user", content: "Hello, world!" }],
+    model: "gpt-4o",
+    input: [{ role: "user", content: "Hello, world!" }],
 });
 
 console.log(completion.output_text);
 ```
 
-The above is real time, and doesn't use any batching API (normal OpenAI costs). However, with this service, you can leverage batching in this way:
+### Using this batching proxy
 
 ```ts
 import OpenAI from 'openai';
 
 const clientWithBatching = new OpenAI({
-  apiKey: process.env['API_KEY_FOR_BATCH_SERVER'],
-  baseURL: process.env['BATCH_SERVER_URL']
+    apiKey: process.env['API_KEY_FOR_BATCH_SERVER'],
+    baseURL: process.env['BATCH_SERVER_URL']
 });
 
 try {
-  const completion = await clientWithBatching.responses.create({
-    model: "gpt-4o",
-    input: [{ role: "user", content: "Hello, world!" }],
-  });
+    const completion = await clientWithBatching.responses.create({
+        model: "gpt-4o",
+        input: [{ role: "user", content: "Hello, world!" }],
+    });
 
-  console.log(completion.output_text);
+    console.log(completion.output_text);
 } catch (e: any) {
-  if (e.status === 422) {
-    console.log("Batch job is still processing. Try again later.")
-  } else {
-    throw e;
-  }
+    if (e.status === 422) {
+        console.log("Batch job is still processing. Try again later.");
+    } else {
+        throw e;
+    }
 }
 ```
 
-As you can see, the new API is very similar to the real time one! It hides all the complexities of using the raw batching APIs provided by OpenAI.
+---
 
-## How to use it?
+## 🚀 Getting Started
 
-1. Run the batching server:
+### 1. Run the Batching Server
+
+Run the server using Docker:
 
 ```bash
-docker run -d -p 9487:9487 -e OPENAI_API_KEY=<your-openai-api-key> -e BATCH_SERVER_API_KEY=<your-batch-server-api-key> POSTGRES_URL="postgres://<user>:<password>@<host>:5432/batching_db"
+docker run -d -p 9487:9487 \
+    -e OPENAI_API_KEY=<your-openai-api-key> \
+    -e BATCH_SERVER_API_KEY=<your-batch-server-api-key> \
+    -e POSTGRES_URL="postgres://<user>:<password>@<host>:5432/batching_db" \
+    your-image-name
 ```
 
+> **Note**: Requires a PostgreSQL database to track job status and results.
 
-2. Use it in your code (NodeJS example):
+### 2. Use it in Your Code (Node.js Example)
 
 ```ts
 import OpenAI from 'openai';
 
 const clientWithBatching = new OpenAI({
-  apiKey: process.env['API_KEY_FOR_BATCH_SERVER'],
-  baseURL: process.env['BATCH_SERVER_URL']
+    apiKey: process.env['API_KEY_FOR_BATCH_SERVER'],
+    baseURL: process.env['BATCH_SERVER_URL']
 });
 
 try {
-  const completion = await clientWithBatching.responses.create({
-    model: "gpt-4o",
-    input: [{ role: "user", content: "Hello, world!" }],
-  });
+    const completion = await clientWithBatching.responses.create({
+        model: "gpt-4o",
+        input: [{ role: "user", content: "Hello, world!" }],
+    });
 
-  console.log(completion.output_text);
+    console.log(completion.output_text);
 } catch (e: any) {
-  if (e.status === 422) {
-    console.log("Batch job is still processing. Try again later.")
-  } else {
-    throw e;
-  }
+    if (e.status === 422) {
+        console.log("Batch job is still processing. Try again later.");
+    } else {
+        throw e;
+    }
 }
 ```
 
-## What are the steps involved in using the raw OpenAI Batching APIs?
-You can read all about it [here](https://platform.openai.com/docs/guides/batch#4-check-the-status-of-a-batch), but roughly, the steps are:
-- Take several queries and put them all in one big file in a JSON format. Each query in the file needs to have a unique ID 
-- Upload the file to OpenAI, to get a file ID.
-- Create a batch job in OpenAI using the file ID, to get a batch ID.
-- Poll the batch job using the batch ID until it's complete or has failed.
-- Once completed, get the output file ID from OpenAI.
-- Download the result using the output file ID.
-- Extract each result based on the custom ID generated in step one and feed it back to your business logic.
-- You need to make sure you handle errors and race conditions in each of the steps above.
+---
+
+## ⚙️ What This Abstracts Away
+
+Normally, using OpenAI’s batching API requires:
+
+1. Building a JSONL file of all your prompts with unique IDs.
+2. Uploading it to OpenAI to get a file ID.
+3. Creating a batch job using that file.
+4. Polling the job status until completion.
+5. Downloading the output file when it’s done.
+6. Mapping results back to your original queries.
+7. Handling retries, errors, race conditions, and consistency.
+
+This project **does all of that for you**.
+
+---
+
+## 🧩 Ideal Use Cases
+
+- Large-scale classification or labeling jobs
+- Periodic evaluations of prompts
+- Nightly batch processing of user data
+- Anything where **latency is not a concern**
+
+---
+
+## 📄 License
+
+MIT
