@@ -38,7 +38,7 @@ app.post("/responses", apiHandler(async (req, res) => {
         delete body.metadata.originalBaseUrl;
         originalBaseUrl = originalBaseUrl.replace(/\/$/, "");
     }
-    let batchId = crypto.createHash('sha256').update(JSON.stringify(sortObject(body))).digest('hex');
+    let batchId = crypto.createHash('sha512').update(JSON.stringify(sortObject(body))).digest('hex');
 
     let batchInfo = await prisma.openai_batch_tasks.findUnique({
         where: {
