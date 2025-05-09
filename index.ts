@@ -14,6 +14,7 @@ import crypto from "crypto";
 import { apiHandler, sortObject } from "./utils";
 import { v4 as uuidv4 } from 'uuid';
 import prisma from "./prisma/client";
+import { startCronJobs } from "./cronjobs";
 
 const app = express();
 
@@ -91,6 +92,8 @@ app.use(async (err: any, req: express.Request, res: express.Response, _: express
     }
     res.status(status).send(clientMessage);
 })
+
+startCronJobs();
 
 app.listen(process.env['PORT'] || 9478, () => {
     logInfo(`Server is running on port ${process.env['PORT'] || 9478}`);
