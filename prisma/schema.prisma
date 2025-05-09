@@ -27,6 +27,7 @@ model openai_batch_tasks {
   time_last_updated BigInt
   time_created      BigInt
   output_file_id    String?
+  error_file_id     String?
 
   @@index([custom_id])
   @@index([status, result])

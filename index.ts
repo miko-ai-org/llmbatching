@@ -16,6 +16,10 @@ import { v4 as uuidv4 } from 'uuid';
 import prisma from "./prisma/client";
 import { startCronJobs } from "./cronjobs";
 
+if (process.env.OPENAI_API_KEY === undefined) {
+    throw new Error("OPENAI_API_KEY is not set in env variable");
+}
+
 const app = express();
 
 app.use(express.json());

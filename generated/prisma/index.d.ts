@@ -902,6 +902,7 @@ export namespace Prisma {
     time_last_updated: bigint | null
     time_created: bigint | null
     output_file_id: string | null
+    error_file_id: string | null
   }
 
   export type Openai_batch_tasksMaxAggregateOutputType = {
@@ -915,6 +916,7 @@ export namespace Prisma {
     time_last_updated: bigint | null
     time_created: bigint | null
     output_file_id: string | null
+    error_file_id: string | null
   }
 
   export type Openai_batch_tasksCountAggregateOutputType = {
@@ -930,6 +932,7 @@ export namespace Prisma {
     time_last_updated: number
     time_created: number
     output_file_id: number
+    error_file_id: number
     _all: number
   }
 
@@ -955,6 +958,7 @@ export namespace Prisma {
     time_last_updated?: true
     time_created?: true
     output_file_id?: true
+    error_file_id?: true
   }
 
   export type Openai_batch_tasksMaxAggregateInputType = {
@@ -968,6 +972,7 @@ export namespace Prisma {
     time_last_updated?: true
     time_created?: true
     output_file_id?: true
+    error_file_id?: true
   }
 
   export type Openai_batch_tasksCountAggregateInputType = {
@@ -983,6 +988,7 @@ export namespace Prisma {
     time_last_updated?: true
     time_created?: true
     output_file_id?: true
+    error_file_id?: true
     _all?: true
   }
 
@@ -1085,6 +1091,7 @@ export namespace Prisma {
     time_last_updated: bigint
     time_created: bigint
     output_file_id: string | null
+    error_file_id: string | null
     _count: Openai_batch_tasksCountAggregateOutputType | null
     _avg: Openai_batch_tasksAvgAggregateOutputType | null
     _sum: Openai_batch_tasksSumAggregateOutputType | null
@@ -1119,6 +1126,7 @@ export namespace Prisma {
     time_last_updated?: boolean
     time_created?: boolean
     output_file_id?: boolean
+    error_file_id?: boolean
   }, ExtArgs["result"]["openai_batch_tasks"]>
 
   export type openai_batch_tasksSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1134,6 +1142,7 @@ export namespace Prisma {
     time_last_updated?: boolean
     time_created?: boolean
     output_file_id?: boolean
+    error_file_id?: boolean
   }, ExtArgs["result"]["openai_batch_tasks"]>
 
   export type openai_batch_tasksSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1149,6 +1158,7 @@ export namespace Prisma {
     time_last_updated?: boolean
     time_created?: boolean
     output_file_id?: boolean
+    error_file_id?: boolean
   }, ExtArgs["result"]["openai_batch_tasks"]>
 
   export type openai_batch_tasksSelectScalar = {
@@ -1164,9 +1174,10 @@ export namespace Prisma {
     time_last_updated?: boolean
     time_created?: boolean
     output_file_id?: boolean
+    error_file_id?: boolean
   }
 
-  export type openai_batch_tasksOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "original_base_url" | "custom_id" | "json_data" | "openai_file_id" | "file_uploaded" | "openai_batch_id" | "status" | "result" | "time_last_updated" | "time_created" | "output_file_id", ExtArgs["result"]["openai_batch_tasks"]>
+  export type openai_batch_tasksOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "original_base_url" | "custom_id" | "json_data" | "openai_file_id" | "file_uploaded" | "openai_batch_id" | "status" | "result" | "time_last_updated" | "time_created" | "output_file_id" | "error_file_id", ExtArgs["result"]["openai_batch_tasks"]>
 
   export type $openai_batch_tasksPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "openai_batch_tasks"
@@ -1184,6 +1195,7 @@ export namespace Prisma {
       time_last_updated: bigint
       time_created: bigint
       output_file_id: string | null
+      error_file_id: string | null
     }, ExtArgs["result"]["openai_batch_tasks"]>
     composites: {}
   }
@@ -1619,6 +1631,7 @@ export namespace Prisma {
     readonly time_last_updated: FieldRef<"openai_batch_tasks", 'BigInt'>
     readonly time_created: FieldRef<"openai_batch_tasks", 'BigInt'>
     readonly output_file_id: FieldRef<"openai_batch_tasks", 'String'>
+    readonly error_file_id: FieldRef<"openai_batch_tasks", 'String'>
   }
     
 
@@ -2011,7 +2024,8 @@ export namespace Prisma {
     result: 'result',
     time_last_updated: 'time_last_updated',
     time_created: 'time_created',
-    output_file_id: 'output_file_id'
+    output_file_id: 'output_file_id',
+    error_file_id: 'error_file_id'
   };
 
   export type Openai_batch_tasksScalarFieldEnum = (typeof Openai_batch_tasksScalarFieldEnum)[keyof typeof Openai_batch_tasksScalarFieldEnum]
@@ -2166,6 +2180,7 @@ export namespace Prisma {
     time_last_updated?: BigIntFilter<"openai_batch_tasks"> | bigint | number
     time_created?: BigIntFilter<"openai_batch_tasks"> | bigint | number
     output_file_id?: StringNullableFilter<"openai_batch_tasks"> | string | null
+    error_file_id?: StringNullableFilter<"openai_batch_tasks"> | string | null
   }
 
   export type openai_batch_tasksOrderByWithRelationInput = {
@@ -2181,6 +2196,7 @@ export namespace Prisma {
     time_last_updated?: SortOrder
     time_created?: SortOrder
     output_file_id?: SortOrderInput | SortOrder
+    error_file_id?: SortOrderInput | SortOrder
   }
 
   export type openai_batch_tasksWhereUniqueInput = Prisma.AtLeast<{
@@ -2199,6 +2215,7 @@ export namespace Prisma {
     time_last_updated?: BigIntFilter<"openai_batch_tasks"> | bigint | number
     time_created?: BigIntFilter<"openai_batch_tasks"> | bigint | number
     output_file_id?: StringNullableFilter<"openai_batch_tasks"> | string | null
+    error_file_id?: StringNullableFilter<"openai_batch_tasks"> | string | null
   }, "id">
 
   export type openai_batch_tasksOrderByWithAggregationInput = {
@@ -2214,6 +2231,7 @@ export namespace Prisma {
     time_last_updated?: SortOrder
     time_created?: SortOrder
     output_file_id?: SortOrderInput | SortOrder
+    error_file_id?: SortOrderInput | SortOrder
     _count?: openai_batch_tasksCountOrderByAggregateInput
     _avg?: openai_batch_tasksAvgOrderByAggregateInput
     _max?: openai_batch_tasksMaxOrderByAggregateInput
@@ -2237,6 +2255,7 @@ export namespace Prisma {
     time_last_updated?: BigIntWithAggregatesFilter<"openai_batch_tasks"> | bigint | number
     time_created?: BigIntWithAggregatesFilter<"openai_batch_tasks"> | bigint | number
     output_file_id?: StringNullableWithAggregatesFilter<"openai_batch_tasks"> | string | null
+    error_file_id?: StringNullableWithAggregatesFilter<"openai_batch_tasks"> | string | null
   }
 
   export type openai_batch_tasksCreateInput = {
@@ -2252,6 +2271,7 @@ export namespace Prisma {
     time_last_updated: bigint | number
     time_created: bigint | number
     output_file_id?: string | null
+    error_file_id?: string | null
   }
 
   export type openai_batch_tasksUncheckedCreateInput = {
@@ -2267,6 +2287,7 @@ export namespace Prisma {
     time_last_updated: bigint | number
     time_created: bigint | number
     output_file_id?: string | null
+    error_file_id?: string | null
   }
 
   export type openai_batch_tasksUpdateInput = {
@@ -2282,6 +2303,7 @@ export namespace Prisma {
     time_last_updated?: BigIntFieldUpdateOperationsInput | bigint | number
     time_created?: BigIntFieldUpdateOperationsInput | bigint | number
     output_file_id?: NullableStringFieldUpdateOperationsInput | string | null
+    error_file_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type openai_batch_tasksUncheckedUpdateInput = {
@@ -2297,6 +2319,7 @@ export namespace Prisma {
     time_last_updated?: BigIntFieldUpdateOperationsInput | bigint | number
     time_created?: BigIntFieldUpdateOperationsInput | bigint | number
     output_file_id?: NullableStringFieldUpdateOperationsInput | string | null
+    error_file_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type openai_batch_tasksCreateManyInput = {
@@ -2312,6 +2335,7 @@ export namespace Prisma {
     time_last_updated: bigint | number
     time_created: bigint | number
     output_file_id?: string | null
+    error_file_id?: string | null
   }
 
   export type openai_batch_tasksUpdateManyMutationInput = {
@@ -2327,6 +2351,7 @@ export namespace Prisma {
     time_last_updated?: BigIntFieldUpdateOperationsInput | bigint | number
     time_created?: BigIntFieldUpdateOperationsInput | bigint | number
     output_file_id?: NullableStringFieldUpdateOperationsInput | string | null
+    error_file_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type openai_batch_tasksUncheckedUpdateManyInput = {
@@ -2342,6 +2367,7 @@ export namespace Prisma {
     time_last_updated?: BigIntFieldUpdateOperationsInput | bigint | number
     time_created?: BigIntFieldUpdateOperationsInput | bigint | number
     output_file_id?: NullableStringFieldUpdateOperationsInput | string | null
+    error_file_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2454,6 +2480,7 @@ export namespace Prisma {
     time_last_updated?: SortOrder
     time_created?: SortOrder
     output_file_id?: SortOrder
+    error_file_id?: SortOrder
   }
 
   export type openai_batch_tasksAvgOrderByAggregateInput = {
@@ -2472,6 +2499,7 @@ export namespace Prisma {
     time_last_updated?: SortOrder
     time_created?: SortOrder
     output_file_id?: SortOrder
+    error_file_id?: SortOrder
   }
 
   export type openai_batch_tasksMinOrderByAggregateInput = {
@@ -2485,6 +2513,7 @@ export namespace Prisma {
     time_last_updated?: SortOrder
     time_created?: SortOrder
     output_file_id?: SortOrder
+    error_file_id?: SortOrder
   }
 
   export type openai_batch_tasksSumOrderByAggregateInput = {

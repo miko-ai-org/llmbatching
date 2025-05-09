@@ -50,7 +50,8 @@ export async function processOpenaiBatching(): Promise<void> {
                 url: "/v1/chat/completions",
                 body: {
                     ...(batchTask.json_data as Prisma.JsonObject),
-                    messages: (batchTask.json_data as Prisma.JsonObject)["input"]
+                    messages: (batchTask.json_data as Prisma.JsonObject)["input"],
+                    input: undefined,
                 }
             };
             return {
@@ -252,16 +253,31 @@ export async function processOpenaiBatching(): Promise<void> {
 
             let status = response.data.status.toLowerCase();
             if (status === "completed") {
-                await tx.openai_batch_tasks.updateMany({
-                    where: {
-                        openai_batch_id: openaiBatchId
-                    },
-                    data: {
-                        status: "completed",
-                        time_last_updated: Date.now(),
-                        output_file_id: response.data.output_file_id
-                    }
-                });
+                if (response.data.output_file_id !== null) {
+                    await tx.openai_batch_tasks.updateMany({
+                        where: {
+                            openai_batch_id: openaiBatchId
+                        },
+                        data: {
+                            status: "completed",
+                            time_last_updated: Date.now(),
+                            output_file_id: response.data.output_file_id
+                        }
+                    });
+                } else {
+                    // there has been some error..
+                    assert(response.data.error_file_id !== null, "Error file ID is null, even if batch is completed and output file is not present!");
+                    await tx.openai_batch_tasks.updateMany({
+                        where: {
+                            openai_batch_id: openaiBatchId
+                        },
+                        data: {
+                            status: "completed",
+                            time_last_updated: Date.now(),
+                            error_file_id: response.data.error_file_id
+                        }
+                    });
+                }
             } else if (status === "failed" || status === "expired" || status === "cancelled") {
                 logError("OpenAI batching failed with status: " + status + " and response: " + JSON.stringify(response.data));
                 await tx.openai_batch_tasks.deleteMany({
@@ -274,59 +290,85 @@ export async function processOpenaiBatching(): Promise<void> {
         }
     });
 
-    // // 5) Fetch and store results from completed batch jobs.
-    // await prisma.$transaction(async (tx) => {
+    // 5) Fetch and store results from completed batch jobs.
+    await prisma.$transaction(async (tx) => {
 
-    //     // we lock so that no other cron will interfere with this.
-    //     await tx.$queryRawUnsafe("SELECT batch_id FROM openai_batch_tasks WHERE status = 'completed' AND result IS NULL FOR UPDATE");
+        // we lock so that no other cron will interfere with this.
+        await tx.$queryRawUnsafe("SELECT id FROM openai_batch_tasks WHERE status = 'completed' AND result IS NULL FOR UPDATE");
 
-    //     const results = await tx.openai_batch_tasks.findMany({
-    //         where: {
-    //             status: "completed",
-    //             result: null,
-    //         },
-    //     });
+        const results = await tx.openai_batch_tasks.findMany({
+            where: {
+                status: "completed",
+                result: {
+                    equals: Prisma.AnyNull,
+                }
+            },
+        });
 
-    //     if (results.length === 0) {
-    //         return;
-    //     }
-    //     const uniqueOutputFileIds = Array.from(new Set(results.map(result => result.output_file_id)));
-    //     for (const outputFileId of uniqueOutputFileIds) {
-    //         assert(outputFileId !== null, "Output file ID is null, even if batch is completed!");
-    //         const url = `${process.env.OPENAI_BATCH_URL}/openai/files/${outputFileId}/content?api-version=${process.env.OPENAI_BATCH_URL_VERSION}`;
-    //         const response = await axios.get(url, {
-    //             headers: {
-    //                 'api-key': process.env.OPENAI_BATCH_API_KEY!
-    //             }
-    //         });
+        if (results.length === 0) {
+            return;
+        }
+        const uniqueErrorFileIds = Array.from(new Set(results.map(result => result.error_file_id))).filter(errorFileId => errorFileId !== null);
+        for (const errorFileId of uniqueErrorFileIds) {
+            const originalBaseUrl = results.find(result => result.error_file_id === errorFileId)!.original_base_url;
+            const openaiBatchId = results.find(result => result.error_file_id === errorFileId)!.openai_batch_id;
+            const url = originalBaseUrl + "/v1/files/" + errorFileId + "/content";
+            const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY!}`
+                }
+            });
 
-    //         const content = response.data;
-    //         if (typeof content === "string") {
-    //             const splittedContent = content.split("\n");
-    //             for (const line of splittedContent) {
-    //                 if (line.trim() === "") {
-    //                     continue;
-    //                 }
-    //                 let jsonified = JSON.parse(line);
-    //                 let customId = jsonified.custom_id;
-    //                 let content = jsonified.response.body.choices[0].message.content;
-    //                 await tx.openai_batch_tasks.updateMany({
-    //                     where: {
-    //                         custom_id: customId
-    //                     },
-    //                     data: { result: content, time_last_updated: Date.now() }
-    //                 });
-    //             }
-    //         } else {
-    //             let customId = content.custom_id;
-    //             let result = content.response.body.choices[0].message.content;
-    //             await tx.openai_batch_tasks.updateMany({
-    //                 where: {
-    //                     custom_id: customId
-    //                 },
-    //                 data: { result, time_last_updated: Date.now() }
-    //             });
-    //         }
-    //     }
-    // });
+            const content = response.data;
+            if (typeof content === "string") {
+                logError("Error file upload content: " + content);
+            } else {
+                logError("Error file upload content: " + JSON.stringify(content));
+            }
+            await tx.openai_batch_tasks.deleteMany({
+                where: {
+                    openai_batch_id: openaiBatchId
+                }
+            });
+        }
+
+        const uniqueOutputFileIds = Array.from(new Set(results.map(result => result.output_file_id))).filter(outputFileId => outputFileId !== null);
+        for (const outputFileId of uniqueOutputFileIds) {
+            const originalBaseUrl = results.find(result => result.output_file_id === outputFileId)!.original_base_url;
+            const url = originalBaseUrl + "/v1/files/" + outputFileId + "/content";
+            const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY!}`
+                }
+            });
+
+            const content = response.data;
+            if (typeof content === "string") {
+                const splittedContent = content.split("\n");
+                for (const line of splittedContent) {
+                    if (line.trim() === "") {
+                        continue;
+                    }
+                    let jsonified = JSON.parse(line);
+                    let customId = jsonified.custom_id;
+                    let content = jsonified.response.body;
+                    await tx.openai_batch_tasks.updateMany({
+                        where: {
+                            custom_id: customId
+                        },
+                        data: { result: content, time_last_updated: Date.now() }
+                    });
+                }
+            } else {
+                let customId = content.custom_id;
+                let result = content.response.body;
+                await tx.openai_batch_tasks.updateMany({
+                    where: {
+                        custom_id: customId
+                    },
+                    data: { result, time_last_updated: Date.now() }
+                });
+            }
+        }
+    });
 }

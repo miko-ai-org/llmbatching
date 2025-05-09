@@ -132,7 +132,8 @@ exports.Prisma.Openai_batch_tasksScalarFieldEnum = {
   result: 'result',
   time_last_updated: 'time_last_updated',
   time_created: 'time_created',
-  output_file_id: 'output_file_id'
+  output_file_id: 'output_file_id',
+  error_file_id: 'error_file_id'
 };
 
 exports.Prisma.SortOrder = {
