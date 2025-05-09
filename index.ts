@@ -66,7 +66,7 @@ app.post("/responses", apiHandler(async (req, res) => {
             }
         })
 
-        res.status(422).send("Still processing. Please try again later");
+        res.status(422).send("Created new batch task. Please check back later.");
     } else {
         if (batchInfo.status === "pending") {
             res.status(422).send("Still processing. Please try again later");
