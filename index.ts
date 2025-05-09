@@ -45,39 +45,72 @@ app.post("/responses", apiHandler(async (req, res) => {
         originalBaseUrl = originalBaseUrl.replace(/\/$/, "");
     }
     let batchId = crypto.createHash('sha512').update(JSON.stringify(sortObject(body))).digest('hex');
+    let retryCount = 0;
+    while (true) {
+        try {
+            let { status, response } = await prisma.$transaction(async (tx) => {
+                let batchInfo = await tx.openai_batch_tasks.findUnique({
+                    where: {
+                        id: batchId,
+                    },
+                });
 
-    let batchInfo = await prisma.openai_batch_tasks.findUnique({
-        where: {
-            id: batchId,
-        },
-    });
-
-    if (batchInfo === null) {
-        let customId = uuidv4();
-        await prisma.openai_batch_tasks.create({
-            data: {
-                id: batchId,
-                custom_id: customId,
-                original_base_url: originalBaseUrl || "https://api.openai.com",
-                time_created: Date.now(),
-                time_last_updated: Date.now(),
-                status: "pending",
-                json_data: body,
-            }
-        })
-
-        res.status(422).send("Created new batch task. Please check back later.");
-    } else {
-        if (batchInfo.status === "pending") {
-            res.status(422).send("Still processing. Please try again later");
-        } else if (batchInfo.status === "completed") {
-            if (batchInfo.result !== null) {
-                res.status(200).json(mapOpenAIBatchResponseToExpectedResponse(batchInfo.json_data as unknown as OpenAIInput, batchInfo.result as OpenAIBatchResponse));
+                if (batchInfo === null) {
+                    let customId = uuidv4();
+                    await tx.openai_batch_tasks.create({
+                        data: {
+                            id: batchId,
+                            custom_id: customId,
+                            original_base_url: originalBaseUrl || "https://api.openai.com",
+                            time_created: Date.now(),
+                            time_last_updated: Date.now(),
+                            status: "pending",
+                            json_data: body,
+                        }
+                    })
+                    return {
+                        status: 422,
+                        response: "Created new batch task. Please check back later.",
+                    }
+                } else {
+                    if (batchInfo.status === "pending") {
+                        return {
+                            status: 422,
+                            response: "Still processing. Please try again later",
+                        }
+                    } else if (batchInfo.status === "completed") {
+                        if (batchInfo.result !== null) {
+                            return {
+                                status: 200,
+                                response: mapOpenAIBatchResponseToExpectedResponse(batchInfo.json_data as unknown as OpenAIInput, batchInfo.result as OpenAIBatchResponse)
+                            }
+                        } else {
+                            return {
+                                status: 422,
+                                response: "Still processing. Please try again later",
+                            }
+                        }
+                    } else {
+                        throw new Error("OpenAI Batching failed with unknown status: " + batchInfo.status);
+                    }
+                }
+            });
+            if (status === 200) {
+                res.json(response);
             } else {
-                res.status(422).send("Still processing. Please try again later");
+                res.status(status).send(response);
             }
-        } else {
-            throw new Error("OpenAI Batching failed with unknown status: " + batchInfo.status);
+        } catch (err) {
+            if ((err as any).message.includes("retry your transaction")) {
+                retryCount++;
+                if (retryCount > 3) {
+                    throw err;
+                }
+                await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 1000));
+                continue;
+            } else {
+                throw err;
+            }
         }
     }
 }, true));
