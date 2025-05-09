@@ -1,4 +1,6 @@
 import express from "express";
+import { v4 as uuidv4 } from 'uuid';
+import { OpenAIBatchResponse, OpenAIExpectedResponse, OpenAIInput } from "./types";
 
 export function apiHandler(handler: (req: express.Request, res: express.Response, next: express.NextFunction) => Promise<void>, requireAuth: boolean) {
     return async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -100,4 +102,61 @@ export function sortObject(obj: any, seen = new WeakSet()): any {
     }
 
     return result;
+}
+
+export function mapOpenAIBatchResponseToExpectedResponse(inputBody: OpenAIInput, outputBody: OpenAIBatchResponse): OpenAIExpectedResponse {
+    return {
+        id: outputBody.id,
+        object: "response",
+        created_at: outputBody.created,
+        status: "completed",
+        error: null,
+        incomplete_details: null,
+        instructions: null,
+        max_output_tokens: null,
+        model: outputBody.model,
+        output: outputBody.choices.map(choice => ({
+            type: "message",
+            id: uuidv4(),
+            status: "completed",
+            role: "assistant",
+            content: [
+                {
+                    type: "output_text",
+                    text: choice.message.content,
+                    annotations: choice.message.annotations || []
+                }
+            ],
+        })),
+        output_text: outputBody.choices.map(choice => choice.message.content).join("\n"),
+        parallel_tool_calls: true,
+        previous_response_id: null,
+        reasoning: {
+            effort: null,
+            summary: null
+        },
+        temperature: inputBody.temperature || 1.0,
+        text: {
+            format: {
+                type: "text"
+            }
+        },
+        tool_choice: inputBody.tool_choice || "auto",
+        tools: [],
+        top_p: inputBody.top_p || 1.0,
+        truncation: inputBody.truncation || "disabled",
+        usage: {
+            input_tokens: outputBody.usage.prompt_tokens,
+            input_tokens_details: {
+                cached_tokens: outputBody.usage.prompt_tokens_details.cached_tokens
+            },
+            output_tokens: outputBody.usage.completion_tokens,
+            output_tokens_details: {
+                reasoning_tokens: outputBody.usage.completion_tokens_details.reasoning_tokens
+            },
+            total_tokens: outputBody.usage.total_tokens
+        },
+        user: inputBody.user || undefined,
+        metadata: inputBody.metadata || {}
+    };
 }

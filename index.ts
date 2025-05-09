@@ -11,10 +11,11 @@ dotenv.config();
 import express from "express";
 import { logError, logInfo } from "./logger";
 import crypto from "crypto";
-import { apiHandler, sortObject } from "./utils";
+import { apiHandler, mapOpenAIBatchResponseToExpectedResponse, sortObject } from "./utils";
 import { v4 as uuidv4 } from 'uuid';
 import prisma from "./prisma/client";
 import { startCronJobs } from "./cronjobs";
+import { OpenAIBatchResponse, OpenAIInput } from "./types";
 
 if (process.env.OPENAI_API_KEY === undefined) {
     throw new Error("OPENAI_API_KEY is not set in env variable");
@@ -71,7 +72,7 @@ app.post("/responses", apiHandler(async (req, res) => {
             res.status(422).send("Still processing. Please try again later");
         } else if (batchInfo.status === "completed") {
             if (batchInfo.result !== null) {
-                res.status(200).json(batchInfo.result);
+                res.status(200).json(mapOpenAIBatchResponseToExpectedResponse(batchInfo.json_data as unknown as OpenAIInput, batchInfo.result as OpenAIBatchResponse));
             } else {
                 res.status(422).send("Still processing. Please try again later");
             }
