@@ -79,10 +79,28 @@ git clone https://github.com/rishabhpoddar/openaibatching.git
 ### 2. Create a docker image (Batching Server)
 
 ```bash
-docker build -t <image_name> .
+docker build -t openaibatching .
 ```
 
-### 3. Run the Batching Server
+### 3. Create a PostgreSQL database and tables
+
+#### Create a database
+
+```psql
+CREATE DATABASE openaibatching;
+```
+
+#### Create the required tables
+
+```bash
+docker run -d -p 9487:9487 \
+    -e OPENAI_API_KEY=<your-openai-api-key> \
+    -e API_KEY=<your-batch-server-api-key> \
+    -e POSTGRES_URL="postgresql://<user>:<password>@<host>:5432/batching_db" \
+    openaibatching npx prisma deploy
+```
+
+### 4. Run the Batching Server
 
 Run the server using Docker:
 
@@ -91,12 +109,12 @@ docker run -d -p 9487:9487 \
     -e OPENAI_API_KEY=<your-openai-api-key> \
     -e API_KEY=<your-batch-server-api-key> \
     -e POSTGRES_URL="postgresql://<user>:<password>@<host>:5432/batching_db" \
-    <image_name>
+    openaibatching
 ```
 
 > **Note**: Requires a PostgreSQL database to track job status and results.
 
-### 4. Use it in Your Code (Node.js Example)
+### 5. Use it in Your Code (Node.js Example)
 
 ```ts
 import OpenAI from 'openai';
