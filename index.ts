@@ -100,6 +100,7 @@ app.post("/responses", apiHandler(async (req, res) => {
             } else {
                 res.status(status).send(response);
             }
+            break;
         } catch (err) {
             if ((err as any).message.includes("retry your transaction")) {
                 retryCount++;
