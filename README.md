@@ -84,20 +84,20 @@ docker build -t openaibatching .
 
 ### 3. Create a PostgreSQL database and tables
 
-#### Create a database
+#### Create a database (You can use any name)
 
 ```psql
-CREATE DATABASE openaibatching;
+CREATE DATABASE openai_batching;
 ```
 
 #### Create the required tables
 
 ```bash
-docker run -d -p 9487:9487 \
-    -e OPENAI_API_KEY=<your-openai-api-key> \
-    -e API_KEY=<your-batch-server-api-key> \
-    -e POSTGRES_URL="postgresql://<user>:<password>@<host>:5432/batching_db" \
-    openaibatching npx prisma deploy
+docker run -p 9487:9487 \
+    -e OPENAI_API_KEY="..." \
+    -e API_KEY="..." \
+    -e DATABASE_URL="postgresql://<username>:<password>@localhost:5432/openai_batching?connection_limit=4" \
+    openaibatching npx prisma migrate deploy
 ```
 
 ### 4. Run the Batching Server
@@ -106,9 +106,9 @@ Run the server using Docker:
 
 ```bash
 docker run -d -p 9487:9487 \
-    -e OPENAI_API_KEY=<your-openai-api-key> \
-    -e API_KEY=<your-batch-server-api-key> \
-    -e POSTGRES_URL="postgresql://<user>:<password>@<host>:5432/batching_db" \
+    -e OPENAI_API_KEY="..." \
+    -e API_KEY="..." \
+    -e DATABASE_URL="postgresql://<username>:<password>@localhost:5432/openai_batching?connection_limit=4" \
     openaibatching
 ```
 

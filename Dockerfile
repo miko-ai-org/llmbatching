@@ -9,6 +9,8 @@ RUN npm install
 
 COPY . .
 
+RUN npx prisma generate --schema=prisma/schema.prisma
+
 # Expose ports
 EXPOSE 9487
 
