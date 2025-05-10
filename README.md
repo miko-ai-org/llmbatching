@@ -10,10 +10,10 @@ Built on top of [OpenAI’s official batching APIs](https://platform.openai.com/
 
 ## ✨ Why use this?
 
-- **50% cost savings** when using batch mode.
-- **No learning curve**: Extremely similar interface to OpenAI’s standard SDK.
-- **Handles all the messy stuff** like polling, mapping, retries, and error handling.
-- **Is crash resistant**: We store state in your database, not in memory.
+- **50% cost savings** in queries to OpenAI. In our internal eval tools (at Miko.ai), we were able to save $200 / week by switching to using batch mode!
+- **No learning curve**: Extremely similar interface to OpenAI’s standard SDK. In fact we don't have any SDK at all! You can use the existing `openai` package as shown below.
+- **Handles all the messy stuff** like polling, mapping, retries, and error handling. Using this library will save you 24-48 hours of engineering time.
+- **Is crash resistant**: We store state in your database, not in memory. This also means it's horizontally scalable.
 - **Fully self hosted**: No need to trust a third party service.
 
 Compare the two:
