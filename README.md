@@ -1,8 +1,8 @@
-# 🧠 OpenAI Batching Proxy
+# 🧠 LLM Batching Proxy
 
-**Reduce OpenAI API costs by up to 50% for non-real-time tasks.**
+**Reduce LLM API costs by up to 50% for non-real-time tasks.**
 
-This is a lightweight proxy server that sits between your backend and OpenAI. It provides a simple, drop-in replacement for OpenAI’s API client that enables **automatic batching** for high-volume, non-urgent workloads like bulk evaluation or dataset classification.
+This is a lightweight proxy server that sits between your backend and LLM providers like OpenAI. It provides a simple, drop-in replacement for OpenAI’s API client that enables **automatic batching** for high-volume, non-urgent workloads like bulk evaluation or dataset classification.
 
 Built on top of [OpenAI’s official batching APIs](https://platform.openai.com/docs/guides/batch#4-check-the-status-of-a-batch), this service abstracts away all the complexity.
 
