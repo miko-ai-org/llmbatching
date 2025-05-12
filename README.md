@@ -181,6 +181,15 @@ This project **does all of that for you**.
 
 ---
 
+## Development setup
+
+```bash
+npm install
+npx prisma generate
+```
+
+---
+
 ## 📄 License
 
 MIT
