@@ -183,10 +183,30 @@ This project **does all of that for you**.
 
 ## Development setup
 
+1) Install dependencies
 ```bash
 npm install
 npx prisma generate
 ```
+
+2) Create a PostgreSQL database and tables
+
+```psql
+CREATE DATABASE llmbatching;
+```
+
+3) Create a `.env` file and set the environment variables
+
+```bash
+cp .env.example .env
+```
+
+4) Run the server
+
+```bash
+npm run dev
+```
+
 
 ---
 
