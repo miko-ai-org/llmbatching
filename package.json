@@ -1,5 +1,5 @@
 {
-  "name": "openaibatching",
+  "name": "llmbatching",
   "version": "1.0.0",
   "description": "This is a service which sits between your backend and OpenAI, exposing a simple, one to one batching interface to your queries so that you can reduce costs by 50%. It's only applicable for non real time tasks, for example: bulk evals or classifying large datasets. It's built on top of [Open AI's batching APIs](https://platform.openai.com/docs/guides/batch#4-check-the-status-of-a-batch).",
   "main": "index.js",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rishabhpoddar/openaibatching.git"
+    "url": "git+https://github.com/rishabhpoddar/llmbatching.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/rishabhpoddar/openaibatching/issues"
+    "url": "https://github.com/rishabhpoddar/llmbatching/issues"
   },
-  "homepage": "https://github.com/rishabhpoddar/openaibatching#readme",
+  "homepage": "https://github.com/rishabhpoddar/llmbatching#readme",
   "dependencies": {
     "@prisma/client": "^6.7.0",
     "@types/dotenv": "^8.2.3",

@@ -73,13 +73,13 @@ console.log(response);
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/rishabhpoddar/openaibatching.git
+git clone https://github.com/rishabhpoddar/llmbatching.git
 ```
 
 ### 2. Create a docker image (Batching Server)
 
 ```bash
-docker build -t openaibatching .
+docker build -t llmbatching .
 ```
 
 ### 3. Create a PostgreSQL database and tables
@@ -87,7 +87,7 @@ docker build -t openaibatching .
 #### Create a database (You can use any name)
 
 ```psql
-CREATE DATABASE openai_batching;
+CREATE DATABASE llmbatching;
 ```
 
 #### Create the required tables
@@ -96,8 +96,8 @@ CREATE DATABASE openai_batching;
 docker run -p 9487:9487 \
     -e OPENAI_API_KEY="..." \
     -e API_KEY="..." \
-    -e DATABASE_URL="postgresql://<username>:<password>@localhost:5432/openai_batching?connection_limit=4" \
-    openaibatching npx prisma migrate deploy
+    -e DATABASE_URL="postgresql://<username>:<password>@localhost:5432/llmbatching?connection_limit=4" \
+    llmbatching npx prisma migrate deploy
 ```
 
 ### 4. Run the Batching Server
@@ -108,8 +108,8 @@ Run the server using Docker:
 docker run -d -p 9487:9487 \
     -e OPENAI_API_KEY="..." \
     -e API_KEY="..." \
-    -e DATABASE_URL="postgresql://<username>:<password>@localhost:5432/openai_batching?connection_limit=4" \
-    openaibatching
+    -e DATABASE_URL="postgresql://<username>:<password>@localhost:5432/llmbatching?connection_limit=4" \
+    llmbatching
 ```
 
 > **Note**: Requires a PostgreSQL database to track job status and results.
