@@ -218,4 +218,4 @@ MIT
 
 ## Author
 
-[Rishabh Poddar](https://github.com/rishabhpoddar)
+Developers at [Miko](https://miko.ai/)
