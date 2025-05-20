@@ -73,7 +73,7 @@ console.log(response);
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/rishabhpoddar/llmbatching.git
+git clone https://github.com/miko-ai-org/llmbatching.git
 ```
 
 ### 2. Create a docker image (Batching Server)
