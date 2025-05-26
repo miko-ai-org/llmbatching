@@ -174,7 +174,7 @@ This project **does all of that for you**.
 
 ## Limitations
 
-- Only supports text input / output with non reasoning models. This will be improved upon as this library makes more progress.
+- Only supports text input / output. This will be improved upon as this library makes more progress.
 - The time taken to get responses can be up to 24 hours (though for really small batches, it can be a few mins even). This depends on OpenAI.
 - Only supports OpenAI (without support for Azure's OpenAI) APIs. So doesnt work with Gemini, Groq, etc, but we will add support for them soon.
 - Works only with PostgreSQL as of now. We will add MySQL support soon.
