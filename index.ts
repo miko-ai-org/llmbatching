@@ -25,6 +25,10 @@ const app = express();
 
 app.use(express.json());
 
+app.get("/healthcheck", (_, res) => {
+    res.send("OK");
+});
+
 app.post("/responses", apiHandler(async (req, res) => {
     let body = req.body;
     if (typeof body.input !== "string" && typeof body.input !== "object") {
